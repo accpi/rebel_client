@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { useTable, useSortBy, usePagination } from 'react-table';
+import { useTable, useSortBy, usePagination, useFilters } from 'react-table';
 
 import Header from '../common/header';
 
@@ -19,7 +19,7 @@ var currencyFormatter = new Intl.NumberFormat('en-US', {
 });
 
 // Our React-Table object
-function Table({ columns, data }) {
+function Table({ columns, data, filterInput, setFilterInput }) {
 	const {
 		// Standard React Table
 		getTableProps,
@@ -39,6 +39,7 @@ function Table({ columns, data }) {
 		setPageSize,
 		state: { pageIndex, pageSize },
 		setHiddenColumns,
+		setFilter,
 	} = useTable({
 		columns, data,
 		initialState: {
@@ -46,7 +47,7 @@ function Table({ columns, data }) {
 			pageIndex: 0,
 		},
 		autoResetPage: false,
-	}, useSortBy, usePagination);
+	}, useFilters, useSortBy, usePagination);
 
 	// Hiding the ID column, needed it to pass to the axios request to update the artist row
 	React.useEffect(() => {
@@ -55,8 +56,23 @@ function Table({ columns, data }) {
 		);
 	}, [setHiddenColumns, columns]);
 
+	// When the filter box changes, update state variable and set the table filter to look for that value
+	const handleFilterChange = e => {
+		const value = e.target.value || undefined;
+		setFilter("artist", value);
+		setFilterInput(value);
+	};
+
 	return (
-		<div>
+		<>
+			<div className="filter">
+				<input
+					type="text"
+					value={filterInput}
+					onChange={handleFilterChange}
+					placeholder={"Search Artist"}
+				/>
+			</div>
 			<table {...getTableProps()} >
 				<thead>
 					{/* Just displaying the different headers + adding the sorting component to them*/}
@@ -143,7 +159,7 @@ function Table({ columns, data }) {
 					))}
 				</select>
 			</div>
-		</div>
+		</>
 	);
 }
 
@@ -151,6 +167,7 @@ function Table({ columns, data }) {
 function App() {
 	const [artists, setArtists] = useState([]);
 	const [updatedArtist, setUpdatedArtist] = useState({});
+	const [filterInput, setFilterInput] = useState("");
 	const [artist, setArtist] = useState({
 		'artist': '',
 		'rate': "0.0001",
@@ -294,6 +311,8 @@ function App() {
 					<Table
 						columns={columns}
 						data={data}
+						filterInput={filterInput}
+						setFilterInput={setFilterInput}
 					/>
 					: null
 			}

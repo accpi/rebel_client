@@ -171,6 +171,22 @@ button:focus {
 */
 
 /*
+	Filter Stying
+*/
+
+.filter input {
+	font-size: 1em;
+	color: #404C7D;
+}
+
+.filter {
+	margin-bottom: 0.5em;
+}
+/*
+	End Filter Stying
+*/
+
+/*
 	Just the smallest bit of responsive CSS
 */
 

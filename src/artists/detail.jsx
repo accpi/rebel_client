@@ -2,7 +2,8 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useParams } from 'react-router-dom'
 
-import Table from './table'
+
+// Started working on the detail page for artists but didn't have time
 
 function App() {
 	const [artist, setArtist] = useState();
