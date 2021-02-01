@@ -2,9 +2,9 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useTable, useSortBy, usePagination } from 'react-table';
 
-import Header from '../common/header'
+import Header from '../common/header';
 
-const apiBase = 'https://rebel-server.herokuapp.com/'
+const apiBase = 'https://rebel-server.herokuapp.com/';
 
 // Base JavaScript number formatting
 // If I was taking this project further, I'd create a little utility function that could take these paramaters for different currency types, etc
@@ -14,6 +14,135 @@ var currencyFormatter = new Intl.NumberFormat('en-US', {
 	currency: 'USD',
 	minimumFractionDigits: 0
 });
+
+// Our React-Table object
+function Table({ columns, data }) {
+	const {
+		// Standard React Table
+		getTableProps,
+		getTableBodyProps,
+		headerGroups,
+		// For accessing pagination + rows within a page
+		page,
+		prepareRow,
+		// Pagination tools for navigation
+		canPreviousPage,
+		canNextPage,
+		pageOptions,
+		pageCount,
+		gotoPage,
+		nextPage,
+		previousPage,
+		setPageSize,
+		state: { pageIndex, pageSize },
+		setHiddenColumns,
+	} = useTable({
+		columns, data,
+		initialState: {
+			pageSize: 20,
+			pageIndex: 0,
+		},
+		autoResetPage: false,
+	}, useSortBy, usePagination);
+
+	// Hiding the ID column, needed it to pass to the axios request to update the artist row
+	React.useEffect(() => {
+		setHiddenColumns(
+			columns.filter(column => !column.isVisible).map(column => column.accessor)
+		);
+	}, [setHiddenColumns, columns]);
+
+	return (
+		<div>
+			<table {...getTableProps()} >
+				<thead>
+					{/* Just displaying the different headers + adding the sorting component to them*/}
+					{headerGroups.map(headerGroup => (
+						<tr {...headerGroup.getHeaderGroupProps()}>
+							{headerGroup.headers.map(column => (
+								<th	{...column.getHeaderProps(column.getSortByToggleProps())}>
+									{column.render('Header')}
+									<span>
+										{column.isSorted
+											? column.isSortedDesc
+												? ' ▲'
+												: ' ▼'
+											: ''}
+									</span>
+								</th>
+							))}
+						</tr>
+					))}
+				</thead>
+				<tbody {...getTableBodyProps()}>
+					{
+						/* 
+						Based on the page, display the rows that would fit
+						If the table has been paid, add a class to change the font for visual feedback
+						*/
+						page.map((row, i) => {
+							prepareRow(row);
+							return (
+								<tr {...row.getRowProps()} >
+									{row.cells.map(cell => {
+										return (
+											<td
+												{...cell.getCellProps()}
+												className={cell.row.values.Paid ? 'paid' : null}
+											>
+												<p>{cell.render('Cell')}</p>
+
+											</td>
+										);
+									})}
+								</tr>
+							);
+						})
+					}
+				</tbody>
+			</table>
+
+			{/* Just a row of buttons that use built in page finders to navigate the table */}
+			<div className="pagination">
+				<button onClick={() => gotoPage(0)} disabled={!canPreviousPage}>
+					{'<<'}
+				</button>{' '}
+				<button onClick={() => previousPage()} disabled={!canPreviousPage}>
+					{'<'}
+				</button>{' '}
+				<button onClick={() => nextPage()} disabled={!canNextPage}>
+					{'>'}
+				</button>{' '}
+				<button onClick={() => gotoPage(pageCount - 1)} disabled={!canNextPage}>
+					{'>>'}
+				</button>{' '}
+				<span>
+					Page{' '}
+					<strong>
+						{pageIndex + 1} of {pageOptions.length}
+					</strong>{' '}
+				</span>
+
+				{/* 
+							Created a pageSize state value that we can manipulate to display loads of things!
+							This could be something like a input box to set a custom display amount, but didn't seem necessary
+							*/}
+				<select
+					value={pageSize}
+					onChange={e => {
+						setPageSize(Number(e.target.value));
+					}}
+				>
+					{[10, 20, 30, 40, 50].map(pageSize => (
+						<option key={pageSize} value={pageSize}>
+							Show {pageSize}
+						</option>
+					))}
+				</select>
+			</div>
+		</div>
+	);
+}
 
 
 function App() {
@@ -32,9 +161,9 @@ function App() {
 			.then(response => {
 				setUpdatedArtist(response.data);
 			});
-			// I tried to write a function here that I could call to update the Artists list, directly made a GET request here, took the response (updated artist) and modified this artist list, etc
-			// None of them worked, there was no re-render even though the call was made
-			// I ended up using a "trigger variable" to get the re-render and state update when I wanted
+		// I tried to write a function here that I could call to update the Artists list, directly made a GET request here, took the response (updated artist) and modified this artist list, etc
+		// None of them worked, there was no re-render even though the call was made
+		// I ended up using a "trigger variable" to get the re-render and state update when I wanted
 	};
 
 	// On page load and when the "trigger variable" updates, grab and store the full list of artists
@@ -98,40 +227,6 @@ function App() {
 		[]
 	);
 
-	const {
-		// Standard React Table
-		getTableProps,
-		getTableBodyProps,
-		headerGroups,
-		// For accessing pagination + rows within a page
-		page,
-		prepareRow,
-		// Pagination tools for navigation
-		canPreviousPage,
-		canNextPage,
-		pageOptions,
-		pageCount,
-		gotoPage,
-		nextPage,
-		previousPage,
-		setPageSize,
-		state: { pageIndex, pageSize },
-		setHiddenColumns
-	} = useTable({
-		columns, data,
-		initialState: {
-			pageSize: 20,
-			pageIndex: 0,
-		},
-	}, useSortBy, usePagination);
-
-	// Hiding the ID column, needed it to pass to the axios request to update the artist row
-	React.useEffect(() => {
-		setHiddenColumns(
-			columns.filter(column => !column.isVisible).map(column => column.accessor)
-		);
-	}, [setHiddenColumns, columns]);
-
 	return (
 		<>
 			{/* Just using the simplest header component in case I was to build out other pages */}
@@ -140,94 +235,10 @@ function App() {
 				// Checking we have artists with a simple ternary, find myself doing that a lot with React!
 				artists.length > 0
 					?
-					<div>
-						<table {...getTableProps()} >
-							<thead>
-								{/* Just displaying the different headers + adding the sorting component to them*/}
-								{headerGroups.map(headerGroup => (
-									<tr {...headerGroup.getHeaderGroupProps()}>
-										{headerGroup.headers.map(column => (
-											<th	{...column.getHeaderProps(column.getSortByToggleProps())}>
-												{column.render('Header')}
-												<span>
-													{column.isSorted
-														? column.isSortedDesc
-															? ' ▲'
-															: ' ▼'
-														: ''}
-												</span>
-											</th>
-										))}
-									</tr>
-								))}
-							</thead>
-							<tbody {...getTableBodyProps()}>
-								{
-									/* 
-									Based on the page, display the rows that would fit
-									If the table has been paid, add a class to change the font for visual feedback
-									*/
-									page.map((row, i) => {
-										prepareRow(row);
-										return (
-											<tr {...row.getRowProps()} >
-												{row.cells.map(cell => {
-													return (
-														<td
-															{...cell.getCellProps()}
-															className={cell.row.values.Paid ? 'paid' : null}
-														>
-															<p>{cell.render('Cell')}</p>
-															
-														</td>
-													);
-												})}
-											</tr>
-										);
-									})
-								}
-							</tbody>
-						</table>
-
-						{/* Just a row of buttons that use built in page finders to navigate the table */}
-						<div className="pagination">
-							<button onClick={() => gotoPage(0)} disabled={!canPreviousPage}>
-								{'<<'}
-							</button>{' '}
-							<button onClick={() => previousPage()} disabled={!canPreviousPage}>
-								{'<'}
-							</button>{' '}
-							<button onClick={() => nextPage()} disabled={!canNextPage}>
-								{'>'}
-							</button>{' '}
-							<button onClick={() => gotoPage(pageCount - 1)} disabled={!canNextPage}>
-								{'>>'}
-							</button>{' '}
-							<span>
-								Page{' '}
-								<strong>
-									{pageIndex + 1} of {pageOptions.length}
-								</strong>{' '}
-							</span>
-
-							{/* 
-							Created a pageSize state value that we can manipulate to display loads of things!
-							This could be something like a input box to set a custom display amount, but didn't seem necessary
-							*/}
-							<select
-								value={pageSize}
-								onChange={e => {
-									setPageSize(Number(e.target.value));
-								}}
-							>
-								{[10, 20, 30, 40, 50].map(pageSize => (
-									<option key={pageSize} value={pageSize}>
-										Show {pageSize}
-									</option>
-								))}
-							</select>
-						</div>
-					</div>
+					<Table
+						columns={columns}
+						data={data}
+					/>
 					: null
 			}
 		</>
