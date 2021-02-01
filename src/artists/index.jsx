@@ -18,6 +18,15 @@ var currencyFormatter = new Intl.NumberFormat('en-US', {
 	minimumFractionDigits: 0
 });
 
+// Thought I'd do more to format numbers, didn't end up using them all too much
+var largeNumberFormatter = new Intl.NumberFormat('en-US', {
+	maximumFractionDigits: 0
+});
+
+var minimumDigitFormater = new Intl.NumberFormat('en-US', {
+	minimumFractionDigits: 5
+});
+
 // Our React-Table object
 function Table({ columns, data, filterInput, setFilterInput }) {
 	const {
@@ -271,17 +280,26 @@ function App() {
 			{
 				Header: 'Rate',
 				accessor: 'rate',
-				isVisible: true
+				isVisible: true,
+				Cell: props => {
+					return <span className="table-number">{minimumDigitFormater.format(props.row.values.rate)}</span>
+				}
 			},
 			{
 				Header: 'Streams',
 				accessor: 'streams',
-				isVisible: true
+				isVisible: true,
+				Cell: props => {
+					return <span className="table-number">{largeNumberFormatter.format(props.row.values.streams)}</span>
+				}
 			},
 			{
 				Header: 'Payout',
-				accessor: row => currencyFormatter.format(row.rate * row.streams),
-				isVisible: true
+				accessor: row => row.rate * row.streams,
+				isVisible: true,
+				Cell: props => {
+					return <span className="table-number">{ currencyFormatter.format(props.row.values.rate * props.row.values.streams)}</span>
+				}
 			},
 			{
 				Header: 'Paid',

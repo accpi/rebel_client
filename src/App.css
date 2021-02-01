@@ -105,6 +105,10 @@ thead th {
 	padding-bottom: 10px;
 }
 
+.table-number {
+	font-family: 'Inconsolata', monospace;
+}
+
 /*
 	End Table Stying
 */
