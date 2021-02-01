@@ -168,14 +168,17 @@ function App() {
 				'paid': event.target.checked
 			})
 			.then(response => {
-				if (response.data.artist.paid) {
+				if (response.data.paid) {
 					toast.success("Artist paid");
 				}
 				else {
-					toast.success("Artist payment revoked");
+					toast.warn("Artist payment revoked");
 				}
 				setUpdatedArtist(response.data);
-				
+			})
+			.catch(error => {
+				console.log(error);
+				toast.error("Error updating artist payment");
 			});
 		// I tried to write a function here that I could call to update the Artists list, directly made a GET request here, took the response (updated artist) and modified this artist list, etc
 		// None of them worked, there was no re-render even though the call was made
@@ -196,6 +199,7 @@ function App() {
 	}, [updatedArtist]); // Using the updatedArtist state object to trigger another request
 
 
+	// Simple form handler that does basic form input valdiation then POSTs to the REST API
 	function createArtist(event) {
 		event.preventDefault();
 		if (artist.artist.length > 0 && artist.rate > 0 && artist.streams) {
@@ -212,6 +216,7 @@ function App() {
 					});
 			}
 			catch (error) {
+				toast.error("Artist unable to be created");
 				console.log(error);
 			}
 		}
@@ -290,11 +295,11 @@ function App() {
 			<div className="input-form">
 				<form onSubmit={createArtist}>
 					<label htmlFor="artist">Artist:</label>
-					<input type="text" id="artist" name="artist" value={artist.artist} onChange={handleChange} />
+					<input required type="text" id="artist" name="artist" value={artist.artist} onChange={handleChange} />
 					<label htmlFor="rate">Rate:</label>
-					<input type="number" id="rate" name="rate" min="0" step="0.0001" value={artist.rate} onChange={handleChange} />
+					<input required type="number" id="rate" name="rate" min="0.0001" step="0.0001" value={artist.rate} onChange={handleChange} />
 					<label htmlFor="streams">Streams:</label>
-					<input type="number" id="streams" name="streams" value={artist.streams} onChange={handleChange} />
+					<input required type="number" id="streams" name="streams" value={artist.streams} onChange={handleChange} />
 					<input type="submit" value="Add Artist" />
 				</form>
 			</div>

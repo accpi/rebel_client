@@ -189,6 +189,13 @@ button:focus {
 		width: 95%;
 	}
 }
+@media (max-width: 375px) {
+	.input-form input[type=text] {
+		width: 250px;
+	}
+	
+}
+
 
 @media (max-width: 414px) {
 	h1 {
@@ -201,4 +208,11 @@ button:focus {
 		height: 20px;
 		width: 20px;
 	}
+	.input-form input[type=text] {
+		width: 229px;
+	}
+	.input-form input[type=number] {
+		width: 180px;
+	}
+	
 }
