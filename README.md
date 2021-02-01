@@ -1,6 +1,17 @@
-# Getting Started with Create React App
+# rebel_client
+[Rebel Coding Test - React Client](https://nelsonkim-rebel.netlify.app/)
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## Implementation
+
+This is a simple one page React app that connects to and displays the data from [https://github.com/accpi/rebel_server](rebel_server).
+
+I decided to use [react-table](https://www.npmjs.com/package/react-table) to display the data, I haven't used this package before so it'd seemed to be an interesting thing to try; this package is very powerful and useful to display data. A lot of the functionality (sorting, filtering) is easily replicated by simple JavaScript functions, but this packages it all in one bundle, which was lovely (but also interesting since access fields + compution + custom rendering wasn't so easily found at first).
+
+I planned to put in the functionality to do the whole CRUD suite, but I would want to put a delete option within an artist's detail page, so that isn't currently added. It could also be done in a modal, but that's a choice I made for this demo. The functionality displayed does demonstrate the ability of the API and using Postman to run a DELETE request will show that it's working.
+
+This web app is minimally responsive, and the CSS is quite basic, no fancy libraries or SASS, but it works(-ish)!
+
+This server is hosted on Heroku [https://rebel-server.herokuapp.com/](https://rebel-server.herokuapp.com/) and doesn't feature any sort of access security, which could easily be added by grabbing a login and recieving a token (like JWT) that would be sent and verified on every request through simple middleware.
 
 ## Available Scripts
 
@@ -8,63 +19,4 @@ In the project directory, you can run:
 
 ### `npm start`
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
-
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
-
-### `npm test`
-
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
-
-### `npm run build`
-
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
-
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+Runs the app; open [http://localhost:3000](http://localhost:3000) to view it in the browser. This app connects to the Heroku API, but you can get the server to run and edit from [https://github.com/accpi/rebel_server](rebel_server).
