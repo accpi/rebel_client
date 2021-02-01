@@ -245,6 +245,7 @@ function App() {
 							'rate': "0.0001",
 							'streams': "0"
 						});
+						setFilterInput("");
 					});
 			}
 			catch (error) {
