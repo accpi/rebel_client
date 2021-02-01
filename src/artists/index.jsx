@@ -255,6 +255,7 @@ function App() {
 		}
 	}
 
+	// Updating artist input values on change in the POST form
 	function handleChange(event) {
 		const value = event.target.value;
 		setArtist({
@@ -284,6 +285,7 @@ function App() {
 				accessor: 'rate',
 				isVisible: true,
 				Cell: props => {
+					// These following custom cell renders are to have a span that takes a monospace font for better number comparison
 					return <span className="table-number">{minimumDigitFormater.format(props.row.values.rate)}</span>
 				}
 			},
