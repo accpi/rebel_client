@@ -19,6 +19,7 @@ var currencyFormatter = new Intl.NumberFormat('en-US', {
 });
 
 // Thought I'd do more to format numbers, didn't end up using them all too much
+// These following ones are used with numbers that have mono-space number fonts so that it's easier to read the differences in numbers between rows
 var largeNumberFormatter = new Intl.NumberFormat('en-US', {
 	maximumFractionDigits: 0
 });
