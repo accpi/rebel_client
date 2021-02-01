@@ -338,7 +338,7 @@ function App() {
 			<div className="input-form">
 				<form onSubmit={createArtist}>
 					<label htmlFor="artist">Artist:</label>
-					<input required type="text" id="artist" name="artist" value={artist.artist} onChange={handleChange} />
+					<input required type="text" id="artist" name="artist" value={artist.artist} onChange={handleChange} placeholder="New Artist Name" />
 					<label htmlFor="rate">Rate:</label>
 					<input required type="number" id="rate" name="rate" min="0.0001" step="0.0001" value={artist.rate} onChange={handleChange} />
 					<label htmlFor="streams">Streams:</label>
