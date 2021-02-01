@@ -213,6 +213,11 @@ function App() {
 					.then(response => {
 						setUpdatedArtist(response.data);
 						toast.success("Artist created");
+						setArtist({
+							'artist': '',
+							'rate': "0.0001",
+							'streams': "0"
+						});
 					});
 			}
 			catch (error) {
