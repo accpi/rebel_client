@@ -10,20 +10,23 @@ import 'react-toastify/dist/ReactToastify.css';
 const apiBase = 'https://rebel-server.herokuapp.com/';
 
 // Base JavaScript number formatting
-// If I was taking this project further, I'd create a little utility function that could take these paramaters for different currency types, etc
-// Another thing I was thinking about was to slice off the currency symbol off the string and display that all the way right on the column for a better look
+// Thought I'd do more to format numbers, didn't end up using them all too much
+// These following ones are used with numbers that have mono-space number fonts so that it's easier to read the differences in numbers between rows
+
+// If I was taking this project further, I might create a little utility function that could take these parameters for different currency types and use that common formatter across the different pages
+// Another thing I was thinking about was to slice the currency symbol off the string and display that all the way to the right on the column for a better look
 var currencyFormatter = new Intl.NumberFormat('en-US', {
 	style: 'currency',
 	currency: 'USD',
 	minimumFractionDigits: 0
 });
 
-// Thought I'd do more to format numbers, didn't end up using them all too much
-// These following ones are used with numbers that have mono-space number fonts so that it's easier to read the differences in numbers between rows
+// This one just adds comma separators
 var largeNumberFormatter = new Intl.NumberFormat('en-US', {
 	maximumFractionDigits: 0
 });
 
+// This one standardizes the decimal digits so you can compare rates easily
 var minimumDigitFormater = new Intl.NumberFormat('en-US', {
 	minimumFractionDigits: 5
 });
@@ -131,7 +134,7 @@ function Table({ columns, data, filterInput, setFilterInput }) {
 				</tbody>
 			</table>
 
-			{/* Just a row of buttons that use built in page finders to navigate the table */}
+			{/* Just a row of buttons that use built in page finders to navigate the table, using default functions to go up and down the page numbers */}
 			<div className="pagination">
 				<button onClick={() => gotoPage(0)} disabled={!canPreviousPage}>
 					{'<<'}
@@ -153,7 +156,7 @@ function Table({ columns, data, filterInput, setFilterInput }) {
 				</span>
 
 				{/* 
-					Created a pageSize state value that we can manipulate to display loads of things!
+					Created a pageSize state value that we can manipulate to display loads of things (or few)!
 					This could be something like a input box to set a custom display amount, but didn't seem necessary
 				*/}
 				<select
@@ -183,7 +186,6 @@ function App() {
 		'rate': "0.0001",
 		'streams': "0"
 	});
-
 
 	// When a checkbox is changed, using the event and artist, make a put request to edit the artist paid status
 	const handleCheckboxChange = (event, artist) => {
@@ -223,10 +225,11 @@ function App() {
 		catch (error) {
 			console.log(error);
 		}
-	}, [updatedArtist]); // Using the updatedArtist state object to trigger another request
+	}, [updatedArtist]); // Using the updatedArtist state object to trigger another request and state change
 
 
 	// Simple form handler that does basic form input valdiation then POSTs to the REST API
+	// This validation isn't strictly necessary, as there's some on the HTML elements and server-side, but nice to have just in case
 	function createArtist(event) {
 		event.preventDefault();
 		if (artist.artist.length > 0 && artist.rate > 0 && artist.streams) {
@@ -271,13 +274,14 @@ function App() {
 	const columns = React.useMemo(
 		() => [
 			{
+				// Need this column so I can access the API with this value to update the row I want
 				Header: 'ID',
 				accessor: 'id',
 				isVisible: false
 			},
 			{
 				Header: 'Artist',
-				accessor: 'artist', // accessor is the "key" in the data
+				accessor: 'artist',
 				isVisible: true
 			},
 			{
@@ -311,8 +315,8 @@ function App() {
 				isVisible: true,
 				// Rendering a custom element instead of just the words "True or False"
 				// Could make this into a little function but that wouldn't really do much for me
-				// Would only change if I was to make a different checkbox to select and perform other actions on em
-				// Using the 1/0 from the accessor to cast back into HTML booleans
+				// Would only change if I was to make a different checkbox to select and perform other standardized actions, it's simple to make a function that takes a function to run onChange (basically what the Table component up top does)
+				// Using the 1/0 values I cast the boolean into from the accessor to cast back into HTML booleans, needed to cast back and forth, surprisingly it doesn't work with standard 1/0 as true/false
 				Cell: props => {
 					return <input type='checkbox' checked={props.row.values.Paid == 1 ? true : false} onChange={(e) => handleCheckboxChange(e, props.row.values)} />;
 				}
@@ -328,6 +332,7 @@ function App() {
 			<ToastContainer autoClose={1300} />
 			{
 				// Checking we have artists with a simple ternary, find myself doing that a lot with React!
+				// Just some simple error handling
 				artists.length > 0
 					?
 					<Table

@@ -6,9 +6,10 @@ import Index from './artists/index';
 import './App.css';
 
 function App() {
-	// 2 Wrapper divs because of React funniness with margins
 	return (
+		// There's a router here because I originally planned on making multiple page types
 		<Router>
+			{/* CSS for keeping the Header up top */}
 			<div className="page-container">
 				<div className='wrapper'>
 					<Index />
