@@ -321,7 +321,7 @@ function App() {
 		<>
 			{/* Just using the simplest header component in case I was to build out other pages */}
 			<Header title={"Rebel - Artists Index"} />
-			<ToastContainer autoClose={2000} />
+			<ToastContainer autoClose={1300} />
 			{
 				// Checking we have artists with a simple ternary, find myself doing that a lot with React!
 				artists.length > 0
