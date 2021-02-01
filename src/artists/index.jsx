@@ -4,6 +4,9 @@ import { useTable, useSortBy, usePagination } from 'react-table';
 
 import Header from '../common/header';
 
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
 const apiBase = 'https://rebel-server.herokuapp.com/';
 
 // Base JavaScript number formatting
@@ -124,9 +127,9 @@ function Table({ columns, data }) {
 				</span>
 
 				{/* 
-							Created a pageSize state value that we can manipulate to display loads of things!
-							This could be something like a input box to set a custom display amount, but didn't seem necessary
-							*/}
+					Created a pageSize state value that we can manipulate to display loads of things!
+					This could be something like a input box to set a custom display amount, but didn't seem necessary
+				*/}
 				<select
 					value={pageSize}
 					onChange={e => {
@@ -148,6 +151,12 @@ function Table({ columns, data }) {
 function App() {
 	const [artists, setArtists] = useState([]);
 	const [updatedArtist, setUpdatedArtist] = useState({});
+	const [artist, setArtist] = useState({
+		'artist': '',
+		'rate': "0.0001",
+		'streams': "0"
+	});
+
 
 	// When a checkbox is changed, using the event and artist, make a put request to edit the artist paid status
 	const handleCheckboxChange = (event, artist) => {
@@ -159,7 +168,14 @@ function App() {
 				'paid': event.target.checked
 			})
 			.then(response => {
+				if (response.data.artist.paid) {
+					toast.success("Artist paid");
+				}
+				else {
+					toast.success("Artist payment revoked");
+				}
 				setUpdatedArtist(response.data);
+				
 			});
 		// I tried to write a function here that I could call to update the Artists list, directly made a GET request here, took the response (updated artist) and modified this artist list, etc
 		// None of them worked, there was no re-render even though the call was made
@@ -179,6 +195,35 @@ function App() {
 		}
 	}, [updatedArtist]); // Using the updatedArtist state object to trigger another request
 
+
+	function createArtist(event) {
+		event.preventDefault();
+		if (artist.artist.length > 0 && artist.rate > 0 && artist.streams) {
+			console.log(artist + ' ' + rate + ' ' + streams);
+			try {
+				axios.post(apiBase + 'artists', {
+					'artist': artist.artist,
+					'rate': artist.rate,
+					'streams': artist.streams
+				})
+					.then(response => {
+						setUpdatedArtist(response.data);
+						toast.success("Artist created");
+					});
+			}
+			catch (error) {
+				console.log(error);
+			}
+		}
+	}
+
+	function handleChange(event) {
+		const value = event.target.value;
+		setArtist({
+			...artist,
+			[event.target.name]: value
+		});
+	}
 
 	// Creating memos for React Table (per requirements of the module)
 	const data = React.useMemo(
@@ -231,6 +276,7 @@ function App() {
 		<>
 			{/* Just using the simplest header component in case I was to build out other pages */}
 			<Header title={"Rebel - Artists Index"} />
+			<ToastContainer autoClose={2000} />
 			{
 				// Checking we have artists with a simple ternary, find myself doing that a lot with React!
 				artists.length > 0
@@ -241,6 +287,17 @@ function App() {
 					/>
 					: null
 			}
+			<div className="input-form">
+				<form onSubmit={createArtist}>
+					<label htmlFor="artist">Artist:</label>
+					<input type="text" id="artist" name="artist" value={artist.artist} onChange={handleChange} />
+					<label htmlFor="rate">Rate:</label>
+					<input type="number" id="rate" name="rate" min="0" step="0.0001" value={artist.rate} onChange={handleChange} />
+					<label htmlFor="streams">Streams:</label>
+					<input type="number" id="streams" name="streams" value={artist.streams} onChange={handleChange} />
+					<input type="submit" value="Add Artist" />
+				</form>
+			</div>
 		</>
 	);
 }

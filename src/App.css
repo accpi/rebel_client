@@ -120,6 +120,7 @@ button:focus {
 .pagination {
 	display: flex;
 	align-items: center;
+	margin-bottom: 1em;
 }
 
 .pagination button {
@@ -141,7 +142,33 @@ button:focus {
 */
 
 
+/*
+	Input-Form Stying
+*/
 
+.input-form label, .input-form input {
+	margin-right: 9px;
+}
+
+.input-form input {
+	font-size: 1em;
+	color: #404C7D;
+}
+
+.input-form input[type=number] {
+	width: 100px;
+}
+
+.input-form input[type=submit] {
+	border: none;
+	padding: 2px 4px;
+	border-radius: 5px;
+	border: 1px#404C7D solid;
+}
+
+/*
+	End Input-Form Stying
+*/
 
 /*
 	Just the smallest bit of responsive CSS
